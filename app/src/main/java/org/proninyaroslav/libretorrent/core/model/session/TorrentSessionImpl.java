@@ -1012,6 +1012,7 @@ public class TorrentSessionImpl extends SessionManager
                     String hash = th.infoHash().toHex();
                     if (magnets.contains(hash))
                         break;
+                    addDefaultTrackersToHandle(th);
                     torrentTasks.put(hash, newTask(th, hash));
                     if (addTorrentsList.contains(hash))
                         notifyListeners((listener) ->
@@ -1036,6 +1037,17 @@ public class TorrentSessionImpl extends SessionManager
                     if (settings.logging)
                         sessionLogger.send(alert);
                     break;
+            }
+        }
+    }
+
+    private void addDefaultTrackersToHandle(TorrentHandle th) {
+        if (th == null || !th.isValid())
+            return;
+
+        for (String tracker : settings.defaultTrackersList) {
+            if (!TextUtils.isEmpty(tracker)) {
+                th.addTracker(new AnnounceEntry(tracker));
             }
         }
     }
@@ -1213,6 +1225,21 @@ public class TorrentSessionImpl extends SessionManager
         sp.setBoolean(settings_pack.bool_types.validate_https_trackers.swigValue(), settings.validateHttpsTrackers);
 
         applyProxy(settings, sp);
+
+        /*
+         * Aggressive swarm settings (fork): tune libtorrent internals for weak swarms
+         * behind CGNAT. These are not exposed in the UI.
+         */
+        sp.setBoolean(settings_pack.bool_types.allow_multiple_connections_per_ip.swigValue(), true);
+        sp.setInteger(settings_pack.int_types.peer_connect_timeout.swigValue(), 10);
+        sp.setInteger(settings_pack.int_types.request_timeout.swigValue(), 20);
+        sp.setInteger(settings_pack.int_types.max_failcount.swigValue(), 5);
+        sp.setInteger(settings_pack.int_types.peer_turnover_interval.swigValue(), 600);
+        sp.setInteger(settings_pack.int_types.dht_announce_interval.swigValue(), 30);
+        sp.setInteger(settings_pack.int_types.connection_speed.swigValue(), 50);
+        sp.setInteger(settings_pack.int_types.torrent_connect_boost.swigValue(), 40);
+        sp.setInteger(settings_pack.int_types.dht_max_peers_reply.swigValue(), 200);
+        sp.setInteger(settings_pack.int_types.max_metadata_size.swigValue(), 16 * 1024 * 1024);
     }
 
     private void applyProxy(SessionSettings settings, SettingsPack sp) {
@@ -1437,6 +1464,7 @@ public class TorrentSessionImpl extends SessionManager
 
                 notifyListeners((listener) ->
                         listener.onRestoreSessionError(torrentId));
+                runNextLoadTorrentTask();
             }
         }
     }
@@ -1664,6 +1692,20 @@ public class TorrentSessionImpl extends SessionManager
         add_torrent_params p = libtorrent.read_resume_data(n, ec);
         if (ec.value() != 0)
             throw new IllegalArgumentException("Unable to read the resume data: " + ec.message());
+
+        Torrent torrent = repo.getTorrentById(id);
+        if (torrent != null && torrent.downloadPath != null) {
+            try {
+                String path = fs.makeFileSystemPath(torrent.downloadPath);
+                if (path != null) {
+                    p.setSave_path(path);
+                }
+            } catch (UnknownUriException e) {
+                Log.e(TAG, "Unable to resolve save path: " + torrent.downloadPath, e);
+            }
+        }
+
+        addDefaultTrackers(p);
 
         torrent_flags_t flags = p.getFlags();
         /* Disable force saving resume data, because they already have */

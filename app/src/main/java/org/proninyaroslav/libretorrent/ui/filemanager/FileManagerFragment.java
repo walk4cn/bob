@@ -519,6 +519,14 @@ public class FileManagerFragment extends Fragment implements FileManagerAdapter.
             showInputNameDialog();
         } else if (itemId == R.id.go_to_folder_menu) {
             goToDirectoryDialog();
+        } else if (itemId == R.id.sort_menu) {
+            var mode = viewModel.observeSortMode().getValue() == FileManagerViewModel.SortMode.NAME
+                    ? FileManagerViewModel.SortMode.TIME
+                    : FileManagerViewModel.SortMode.NAME;
+            viewModel.setSortMode(mode);
+            item.setTitle(mode == FileManagerViewModel.SortMode.NAME
+                    ? R.string.sort_by_name
+                    : R.string.sort_by_time);
         }
 
         return true;

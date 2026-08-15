@@ -82,7 +82,16 @@ public class SettingsRepositoryImpl implements SettingsRepository {
         static final int customBatteryControlValue = Utils.getDefaultBatteryLowLevel();
         static final boolean unmeteredConnectionsOnly = false;
         static final boolean enableRoaming = true;
-        static final String defaultTrackersList = "";
+        static final String defaultTrackersList =
+                "udp://tracker.opentrackr.org:1337/announce\n" +
+                "udp://open.stealth.si:80/announce\n" +
+                "udp://tracker.torrent.eu.org:451/announce\n" +
+                "udp://explodie.org:6969/announce\n" +
+                "udp://tracker.openbittorrent.com:6969/announce\n" +
+                "udp://tracker.moeking.me:6969/announce\n" +
+                "http://tracker.opentrackr.org:1337/announce\n" +
+                "https://tracker.gbitt.info/announce\n" +
+                "https://opentracker.i2p.rocks:443/announce";
         /* Network settings */
         static final int portRangeFirst = SessionSettings.DEFAULT_PORT_RANGE_FIRST;
         static final int portRangeSecond = SessionSettings.DEFAULT_PORT_RANGE_SECOND;

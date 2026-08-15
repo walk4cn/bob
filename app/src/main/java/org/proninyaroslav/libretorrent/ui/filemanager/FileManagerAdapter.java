@@ -22,6 +22,8 @@ package org.proninyaroslav.libretorrent.ui.filemanager;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Typeface;
+import android.text.format.DateFormat;
+import android.text.format.Formatter;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -39,7 +41,6 @@ import org.proninyaroslav.libretorrent.core.system.FileSystemFacade;
 import org.proninyaroslav.libretorrent.core.system.SystemFacadeHelper;
 import org.proninyaroslav.libretorrent.databinding.ItemFileManagerBinding;
 
-import java.util.Comparator;
 import java.util.List;
 
 /*
@@ -52,13 +53,6 @@ public class FileManagerAdapter extends ListAdapter<FileManagerNode, FileManager
 
     private final ViewHolder.ClickListener clickListener;
     private final List<String> highlightFileTypes;
-
-    private static final Comparator<FileManagerNode> directoryFirstCmp = (n1, n2) -> {
-        int byName = n1.compareTo(n2);
-        int directoryFirst = Boolean.compare(n2.isDirectory(), n1.isDirectory());
-
-        return (directoryFirst == 0 ? byName : directoryFirst);
-    };
 
     public FileManagerAdapter(List<String> highlightFileTypes, ViewHolder.ClickListener clickListener) {
         super(diffCallback);
@@ -83,10 +77,6 @@ public class FileManagerAdapter extends ListAdapter<FileManagerNode, FileManager
 
     @Override
     public void submitList(@Nullable List<FileManagerNode> list) {
-        if (list != null) {
-            list.sort(directoryFirstCmp);
-        }
-
         super.submitList(list);
     }
 
@@ -144,6 +134,20 @@ public class FileManagerAdapter extends ListAdapter<FileManagerNode, FileManager
             }
             binding.label.setEnabled(item.isEnabled());
             binding.label.setText(item.getName());
+
+            if (item.getLastModified() > 0) {
+                var dateFormat = DateFormat.getDateFormat(context);
+                var timeFormat = DateFormat.getTimeFormat(context);
+                var time = dateFormat.format(item.getLastModified()) + " " + timeFormat.format(item.getLastModified());
+                if (item.isDirectory()) {
+                    binding.detail.setText(time);
+                } else {
+                    binding.detail.setText(Formatter.formatFileSize(context, item.getSize()) + " · " + time);
+                }
+            } else {
+                binding.detail.setText("");
+            }
+            binding.detail.setEnabled(item.isEnabled());
 
             if (item.isDirectory()) {
                 if (item.getName().equals(FileManagerNode.PARENT_DIR)) {

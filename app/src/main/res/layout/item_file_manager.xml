@@ -9,20 +9,37 @@
     android:clickable="true"
     android:focusable="true">
 
-    <TextView
-        android:id="@+id/label"
-        style="@style/App.Components.ListItem.Label"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_marginHorizontal="16dp"
         android:layout_marginVertical="8dp"
-        android:drawablePadding="16dp"
-        android:ellipsize="end"
-        android:gravity="center_vertical"
-        android:maxLines="2"
-        android:minHeight="@dimen/list_item_one_line_height"
-        app:drawableTint="?attr/colorControlNormal"
-        tools:drawableStartCompat="@drawable/ic_file_24px"
-        tools:text="File" />
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/label"
+            style="@style/App.Components.ListItem.Label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawablePadding="16dp"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:maxLines="2"
+            android:minHeight="@dimen/list_item_one_line_height"
+            app:drawableTint="?attr/colorControlNormal"
+            tools:drawableStartCompat="@drawable/ic_file_24px"
+            tools:text="File" />
+
+        <TextView
+            android:id="@+id/detail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:textColor="?android:attr/textColorSecondary"
+            android:textSize="12sp"
+            tools:text="1.2 MB · 2026-08-15 10:00" />
+    </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

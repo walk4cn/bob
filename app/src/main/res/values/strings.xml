@@ -210,6 +210,8 @@
     <string name="error_open_dir">Could not open the folder</string>
     <string name="home_directory">Home</string>
     <string name="go_to_folder">Go to folder</string>
+    <string name="sort_by_name">Sort by name</string>
+    <string name="sort_by_time">Sort by time</string>
     <!-- name (size) -->
     <string name="storage_name_and_size" formatted="false">%1$s (%2$s)</string>
     <string name="internal_storage_name">Internal storage</string>

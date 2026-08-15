@@ -35,12 +35,34 @@ public class FileManagerNode implements FileNode<FileManagerNode>
     private String node;
     private int nodeType;
     private boolean enabled;
+    private long lastModified;
+    private long size;
 
     public FileManagerNode(String item, int itemType, boolean enabled)
     {
         node = item;
         nodeType = itemType;
         this.enabled = enabled;
+    }
+
+    public long getLastModified()
+    {
+        return lastModified;
+    }
+
+    public void setLastModified(long lastModified)
+    {
+        this.lastModified = lastModified;
+    }
+
+    public long getSize()
+    {
+        return size;
+    }
+
+    public void setSize(long size)
+    {
+        this.size = size;
     }
 
     @Override

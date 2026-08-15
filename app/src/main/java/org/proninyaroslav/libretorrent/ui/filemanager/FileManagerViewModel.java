@@ -68,6 +68,21 @@ public class FileManagerViewModel extends AndroidViewModel {
     public BehaviorSubject<List<FileManagerNode>> childNodes = BehaviorSubject.create();
     private List<StorageItem> storageList;
 
+    public enum SortMode { NAME, TIME }
+
+    private final BehaviorSubject<SortMode> sortMode = BehaviorSubject.createDefault(SortMode.NAME);
+
+    public BehaviorSubject<SortMode> observeSortMode() {
+        return sortMode;
+    }
+
+    public void setSortMode(SortMode mode) {
+        if (mode != sortMode.getValue()) {
+            sortMode.onNext(mode);
+            refreshCurDirectory();
+        }
+    }
+
     static final ViewModelInitializer<FileManagerViewModel> initializer = new ViewModelInitializer<>(
             FileManagerViewModel.class,
             creationExtras -> {
@@ -160,12 +175,36 @@ public class FileManagerViewModel extends AndroidViewModel {
                 return items;
             }
             for (var file : filterDirectories(files)) {
+                FileManagerNode node;
                 if (file.isDirectory()) {
-                    items.add(new FileManagerNode(file.getName(), FileNode.Type.DIR, true));
+                    node = new FileManagerNode(file.getName(), FileNode.Type.DIR, true);
                 } else {
-                    items.add(new FileManagerNode(file.getName(), FileManagerNode.Type.FILE,
-                            config.showMode == FileManagerConfig.Mode.FILE_CHOOSER));
+                    node = new FileManagerNode(file.getName(), FileManagerNode.Type.FILE,
+                            config.showMode == FileManagerConfig.Mode.FILE_CHOOSER);
+                    node.setSize(file.length());
                 }
+                node.setLastModified(file.lastModified());
+                items.add(node);
+            }
+
+            /* Sorting, parent dir always stays first */
+            var sortMode = this.sortMode.getValue();
+            if (sortMode == SortMode.TIME) {
+                items.subList(1, items.size()).sort((a, b) -> {
+                    int dirFirst = Boolean.compare(b.isDirectory(), a.isDirectory());
+                    if (dirFirst != 0) {
+                        return dirFirst;
+                    }
+                    return Long.compare(b.getLastModified(), a.getLastModified());
+                });
+            } else {
+                items.subList(1, items.size()).sort((a, b) -> {
+                    int dirFirst = Boolean.compare(b.isDirectory(), a.isDirectory());
+                    if (dirFirst != 0) {
+                        return dirFirst;
+                    }
+                    return a.compareTo(b);
+                });
             }
 
         } catch (Exception e) {

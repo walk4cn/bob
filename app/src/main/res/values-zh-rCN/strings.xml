@@ -589,6 +589,8 @@
     <string name="torrent_version">Torrent 版本</string>
     <string name="torrent_version_entries_hybrid">混合</string>
     <string name="go_to_folder">转到文件夹</string>
+    <string name="sort_by_name">按名称排序</string>
+    <string name="sort_by_time">按时间排序</string>
     <string name="error_open_ip_filter_file">无法打开 IP 筛选器文件</string>
     <string name="error_select_folder">无法打开所选文件夹</string>
     <string name="single_downloading_torrent_notify_template">%1$d%% • %2$s • ↓ %3$s/秒</string>

@@ -30,12 +30,12 @@ public class SessionSettings
 {
     public static final int DEFAULT_ACTIVE_DOWNLOADS = 4;
     public static final int DEFAULT_ACTIVE_SEEDS = 4;
-    public static final int DEFAULT_MAX_PEER_LIST_SIZE = 200;
+    public static final int DEFAULT_MAX_PEER_LIST_SIZE = 500;
     public static final int DEFAULT_TICK_INTERVAL = 1000;
-    public static final int DEFAULT_INACTIVITY_TIMEOUT = 60;
+    public static final int DEFAULT_INACTIVITY_TIMEOUT = 120;
     public static final int MIN_CONNECTIONS_LIMIT = 2;
     public static final int DEFAULT_CONNECTIONS_LIMIT = 200;
-    public static final int DEFAULT_CONNECTIONS_LIMIT_PER_TORRENT = 40;
+    public static final int DEFAULT_CONNECTIONS_LIMIT_PER_TORRENT = 100;
     public static final int DEFAULT_UPLOADS_LIMIT_PER_TORRENT = 4;
     public static final int DEFAULT_ACTIVE_LIMIT = 6;
     public static final int DEFAULT_DOWNLOAD_RATE_LIMIT = 0;
